@@ -29,6 +29,10 @@ var taskSchema = new Schema({
         type: Number,
         default: 0
     },
+    progress: {
+        type: Number,
+        default: 0
+    },
     playerIds: [{ type: String }]
 
 

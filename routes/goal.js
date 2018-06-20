@@ -10,7 +10,7 @@ var Coach = require('../models/coachModel');
 
 router.get('/allGoals/:coachId', (req, res) => {
     var coachId = req.params.coachId;
-    console.log(coachId);
+    //console.log(coachId);
     Coach.findOne({ 'coachId': coachId }, (err, coachObj) => {
         if (err) throw err;
         console.log(coachObj);
@@ -52,7 +52,8 @@ router.get('/allGoals/:coachId', (req, res) => {
 });
 
 router.post('/add', (req, res) => {
-    var body = _.pick(req.body, ['goalId', 'goalName', 'goalDes', 'goalImage', 'coachId', 'timeLimit', 'tasks', 'progress']);
+    var body = _.pick(req.body, ['goalId', 'goalName', 'goalDes', 'goalImage', 'coachId', 'timeLimit', 'tasks']);
+    body['progress'] = 0;
     body['dateCreated'] = new Date();
     var goalId = req.body.goalId;
     if (body) {

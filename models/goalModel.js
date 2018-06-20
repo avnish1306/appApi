@@ -29,6 +29,10 @@ var goalSchema = new Schema({
         type: String,
         default: ""
     },
+    progress: {
+        type: Number,
+        default: 0
+    },
     tasks: [{ type: Number }]
 
 });
