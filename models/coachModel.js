@@ -36,13 +36,18 @@ var coachSchema = new Schema({
     profile_pic: {
         type: String
     },
-    goals: [{ type: String }]
+    goals: [{ type: Number }],
+    reqTasks: [{
+        taskId: Number,
+        playerId: Number,
+        state: Number
+    }]
 });
 
 coachSchema.methods.toJSON = function() {
     var coach = this;
     var coachObject = coach.toObject();
-    return _.pick(coachObject, ['Email', '_id', 'coachId', 'Professoion', 'Name', 'DoBs', 'username', 'profile_pic', 'Gender', 'goals']);
+    return _.pick(coachObject, ['Email', '_id', 'coachId', 'Professoion', 'Name', 'DoBs', 'username', 'profile_pic', 'Gender', 'goals', 'reqTasks']);
 }
 
 module.exports = mongoose.model('Coach', coachSchema);

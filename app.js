@@ -10,6 +10,7 @@ var playerRouter = require('./routes/player');
 var coachRouter = require('./routes/coach');
 var taskRouter = require('./routes/task');
 var bodyParser = require('body-parser');
+var goalRouter = require('./routes/goal');
 
 var app = express();
 
@@ -41,6 +42,7 @@ app.use('/users', usersRouter);
 app.use('/player', playerRouter);
 app.use('/coach', coachRouter);
 app.use('/task', taskRouter);
+app.use('/goal', goalRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

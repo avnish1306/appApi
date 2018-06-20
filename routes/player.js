@@ -3,6 +3,9 @@ var mongoose = require('mongoose');
 var router = express.Router();
 const _ = require('lodash');
 var Player = require('../models/playerModel');
+var Goal = require('../models/goalModel');
+var Task = require('../models/taskModel');
+var Coach = require('../models/coachModel');
 
 router.get('/isuname/:uname', (req, res) => {
     var uname = req.params.uname;
@@ -134,6 +137,50 @@ router.get('/isapplied/:taskId/:playerId', (req, res) => {
                 'state': 0
             });
         }
+    });
+});
+
+router.get('/addTask/:playerId/:taskId', (req, res) => {
+    var taskId = parseInt(req.params.taskId);
+    var goalId = Math.floor(taskId / 10000);
+    var playerId = req.params.playerId;
+    Player.findOne({ 'playerId': playerId }, (err, result) => {
+        if (err) throw err;
+        var temp = {
+            'taskId': taskId,
+            'state': 1
+        }
+        console.log(result['taskState']);
+        (result['taskState']).push(temp);
+        var player = new Player(result);
+        player.save((err, result) => {
+            if (err) throw err;
+            var coachId;
+            Goal.findOne({ 'goalId': goalId }, (err, goalObj) => {
+                if (err) throw err;
+                coachId = goalObj['coachId'];
+                Coach.findOne({ 'coachId': coachId }, (err, coachObj) => {
+                    if (err) throw err;
+                    var temp2 = {
+                            'taskId': taskId,
+                            'playerId': playerId,
+                            'state': 1
+                        }
+                        (coachObj['reqTasks']).push(temp2);
+                    var coach = new Coach(coachObj);
+                    coach.save((err, ok) => {
+                        if (err) throw err;
+                        res.json({
+                            'success': true
+                        });
+
+                    });
+
+                });
+            });
+
+
+        });
     });
 });
 
