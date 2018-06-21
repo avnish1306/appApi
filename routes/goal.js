@@ -55,32 +55,49 @@ router.post('/add', (req, res) => {
     var body = _.pick(req.body, ['goalId', 'goalName', 'goalDes', 'goalImage', 'coachId', 'timeLimit', 'tasks']);
     body['progress'] = 0;
     body['dateCreated'] = new Date();
-    var goalId = req.body.goalId;
-    if (body) {
-        var goal = new Goal(body);
-        console.log(goal);
-        goal.save().then((goal) => {
-            Coach.findOne({ 'coachId': req.body.coachId }, (err, coachObj) => {
-                if (err) throw err;
-                (coachObj['goals']).push(parseInt(goalId));
-                var coach = new Coach(coachObj);
-                coach.save((err, result) => {
-                    if (err) throw err;
-                    res.status(200).json({
-                        'success': true,
-                        'msg': 'saved',
-                        'goalId': req.body.goalId
-                    });
-                })
-            })
-        }, (e) => {
-            console.log(e);
-            res.status(200).json({
-                'success': false,
-                'msg': 'not saved'
-            });
+    var promise = new Promise((resolve, reject) => {
+        Goal.find({}, (err, goals) => {
+            if (err) throw err;
+            console.log(goals);
+            if (goals[0] != null) {
+                var len = goals.length;
+                console.log("length ", len);
+                resolve(parseInt((goals[len - 1])['goalId']) + 1);
+            } else {
+                resolve(1000);
+            }
         });
-    }
+    });
+    promise.then((goalId) => {
+        if (body) {
+            body['goalId'] = goalId;
+            var goal = new Goal(body);
+            console.log(goal);
+            goal.save().then((goal) => {
+                Coach.findOne({ 'coachId': req.body.coachId }, (err, coachObj) => {
+                    if (err) throw err;
+                    (coachObj['goals']).push(parseInt(goalId));
+                    var coach = new Coach(coachObj);
+                    coach.save((err, result) => {
+                        if (err) throw err;
+                        res.status(200).json({
+                            'success': true,
+                            'msg': 'saved',
+                            'goalId': req.body.goalId
+                        });
+                    })
+                })
+            }, (e) => {
+                console.log(e);
+                res.status(200).json({
+                    'success': false,
+                    'msg': 'not saved'
+                });
+            });
+        }
+    });
+    //var goalId = req.body.goalId;
+
 });
 
 module.exports = router;
